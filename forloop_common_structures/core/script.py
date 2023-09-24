@@ -3,12 +3,9 @@ from typing import ClassVar, Any, Dict, List
 
 @dataclass
 class Script:
-    
     script_name: str=""
     text: str=""
     project_uid: str="0"
-    
-    
     
     uid: str = field(init=False)
     instance_counter: ClassVar[int] = 0
