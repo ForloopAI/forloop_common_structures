@@ -16,7 +16,7 @@ class Pipeline:
     is_active: bool = False
     active_nodes_uids: list = field(default_factory=list)
     remaining_nodes_uids: list = field(default_factory=list)
-    last_job_uid: Optional[str] = None
+    is_running: bool = False  # Each pipeline can only have one referenced job executed at a time
 
     project_uid: str = "0"
     uid: Optional[str] = None
