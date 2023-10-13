@@ -50,6 +50,10 @@ class NodeJob:
         if isinstance(self.status, str):
             self.status = JobStatusEnum(self.status)
 
+    def __str__(self) -> str:
+        """Create string representation of the class used in logging."""
+        return f"{type(self).__name__}:{self.uid}"
+
 
 class PipelineElements(TypedDict):
     nodes: list[Node]
@@ -92,3 +96,7 @@ class PipelineJob:
                 ]
 
         self.pipeline_elements = deserialized_elements
+
+    def __str__(self) -> str:
+        """Create string representation of the class used in logging."""
+        return f"{type(self).__name__}:{self.uid}"
