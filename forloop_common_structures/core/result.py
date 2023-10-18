@@ -14,7 +14,7 @@ class Result:
     name: str
     value: VariableValueTypes
 
-    job_uid: str
+    pipeline_job_uid: str
     uid: Optional[str] = None
 
     def update(self, **kwargs) -> None:
