@@ -15,6 +15,6 @@ class Trigger:
     name: str
     first_run: datetime.datetime
     frequency: TriggerFrequencyEnum
-    pipeline_uid: int
+    pipeline_uid: str
     project_uid: str
     uid: Optional[str] = None
