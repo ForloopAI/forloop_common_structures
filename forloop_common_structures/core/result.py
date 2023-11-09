@@ -13,8 +13,9 @@ class Result:
 
     name: str
     value: VariableValueTypes
-
     pipeline_job_uid: str
+    type: Optional[str] = None
+    size: Optional[int] = None
     uid: Optional[str] = None
 
     def update(self, **kwargs) -> None:
