@@ -1,12 +1,5 @@
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import ClassVar
-
-
-class DbDialectEnum(str, Enum):
-    MYSQL = "mysql"
-    POSTGRES = "postgres"
-    MONGO = "mongo"
 
 
 @dataclass
