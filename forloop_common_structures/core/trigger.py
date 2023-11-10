@@ -1,14 +1,9 @@
 import datetime
 from dataclasses import dataclass
-from enum import Enum
 from typing import Optional
 
+from forloop_modules.queries.db_model_templates import TriggerFrequencyEnum
 
-class TriggerFrequencyEnum(str, Enum):
-    HOURLY = "hourly"
-    DAILY = "daily"
-    WEEKLY = "weekly"
-    MONTHLY = "monthly"
 
 @dataclass
 class Trigger:
