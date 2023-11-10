@@ -13,7 +13,7 @@ class TriggerFrequencyEnum(str, Enum):
 @dataclass
 class Trigger:
     name: str
-    first_run: datetime.datetime
+    first_run_utc: datetime.datetime
     frequency: TriggerFrequencyEnum
     pipeline_uid: str
     project_uid: str
