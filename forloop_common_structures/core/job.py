@@ -85,7 +85,7 @@ class PipelineJob:
     def _deserialize_pipeline_elements(self) -> None:
         """Deserialize nodes, edges, variables into list of objects in case the Job was instantiated from JSON."""
         name_mapping = {"nodes": Node, "edges": Edge, "variables": Variable}
-        deserialized_elements = {"nodes": [], "edges": [], "variables": []}
+        deserialized_elements: PipelineElements = {"nodes": [], "edges": [], "variables": []}
 
         for element_type, elements in self.pipeline_elements.items():
             # Iterate over Nodes/Edges/Variables groups if instantiated as dicts

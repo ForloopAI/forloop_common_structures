@@ -5,7 +5,7 @@ from typing import Optional
 @dataclass
 class Pipeline:
     name: str
-    start_node_uid: str = 0
+    start_node_uid: str = "0"
     is_active: bool = False
     active_nodes_uids: list = field(default_factory=list)
     remaining_nodes_uids: list = field(default_factory=list)
