@@ -3,8 +3,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, TypedDict
 
-from src.core.node import Node
-
+from forloop_common_structures.core.node import Node
 from forloop_common_structures.core.edge import Edge
 from forloop_common_structures.core.variable import Variable
 
