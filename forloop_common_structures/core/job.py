@@ -1,29 +1,11 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
 from typing import Optional, TypedDict
 
 from forloop_common_structures.core.edge import Edge
 from forloop_common_structures.core.node import Node
 from forloop_common_structures.core.variable import Variable
-
-
-class JobSortableColumnsEnum(str, Enum):
-    STATUS = "status"
-    CREATED_AT = "created_at"
-    STARTED_AT = "started_at"
-    COMPLETED_AT = "completed_at"
-    PIPELINE_UID = "pipeline_uid"
-
-
-class JobStatusEnum(str, Enum):
-    QUEUED = "QUEUED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETED = "COMPLETED"
-    FAILED = "FAILED"
-    PAUSED = "PAUSED"
-    CANCELLING = "CANCELLING"  # Job in the process of being canceled, but not yet canceled
-    CANCELED = "CANCELED"
+from forloop_modules.queries.db_model_templates import JobStatusEnum
 
 
 @dataclass
@@ -63,7 +45,7 @@ class PipelineElements(TypedDict):
 @dataclass
 class PipelineJob:
     pipeline_uid: str
-    pipeline_elements: PipelineElements # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
+    pipeline_elements: PipelineElements  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
 
     uid: Optional[str] = None
     machine_uid: Optional[str] = None
@@ -108,7 +90,6 @@ class OperationJob:
     node: Node
 
     uid: Optional[str] = None
-    machine_uid: Optional[str] = None
     status: JobStatusEnum = JobStatusEnum.QUEUED
     created_at: datetime = field(default_factory=datetime.utcnow)
     started_at: Optional[datetime] = None
