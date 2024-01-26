@@ -12,7 +12,7 @@ class Database:
     username: str
     password: str
     dialect: str
-    project_uid: int = 0
+    project_uid: str = "0"
 
     uid: str = field(init=False)
     instance_counter: ClassVar[int] = 0
