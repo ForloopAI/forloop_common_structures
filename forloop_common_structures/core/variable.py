@@ -15,7 +15,6 @@ class Variable:
     value: VariableValueTypes
     type: Optional[str] = None
     size: Optional[int] = None
-    is_result: bool = False  # TODO: Remove when PrototypeJobs are implemented
     pipeline_uid: str = "0"  # TODO: Remove when PrototypeJobs are implemented
     pipeline_job_uid: str = "0"
     project_uid: str = "0"
