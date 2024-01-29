@@ -36,7 +36,7 @@ class NodeJob:
         return f"{type(self).__name__}:{self.uid}"
 
 
-class PipelineElements(TypedDict):
+class PipelineBuildingBlocks(TypedDict):
     nodes: list[Node]
     edges: list[Edge]
     variables: list[Variable]
@@ -45,7 +45,7 @@ class PipelineElements(TypedDict):
 @dataclass
 class PipelineJob:
     pipeline_uid: str
-    pipeline_elements: PipelineElements  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
+    pipeline_elements: PipelineBuildingBlocks  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
 
     uid: Optional[str] = None
     machine_uid: Optional[str] = None
@@ -67,7 +67,7 @@ class PipelineJob:
     def _deserialize_pipeline_elements(self) -> None:
         """Deserialize nodes, edges, variables into list of objects in case the Job was instantiated from JSON."""
         name_mapping = {"nodes": Node, "edges": Edge, "variables": Variable}
-        deserialized_elements: PipelineElements = {"nodes": [], "edges": [], "variables": []}
+        deserialized_elements: PipelineBuildingBlocks = {"nodes": [], "edges": [], "variables": []}
 
         for element_type, elements in self.pipeline_elements.items():
             # Iterate over Nodes/Edges/Variables groups if instantiated as dicts
