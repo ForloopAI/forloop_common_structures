@@ -7,6 +7,6 @@ class UserFlowStep:
     user_uid: str
     step_identifier: str
     step_data: str
-    timestamp: datetime.datetime
+    timestamp_utc: datetime.datetime
     
     uid: Optional[str] = None
