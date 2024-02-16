@@ -66,6 +66,9 @@ class Node:
     def fields(self, fields):
         if hasattr(self,"node_detail_form"):
             self.node_detail_form.fields = fields
+            
+    def __post_init__(self):
+        self.node_detail_form.node_uid = self.uid
 
     def __hash__(self):
         return hash((self.typ, self.uid))
