@@ -56,6 +56,16 @@ class Node:
             self.node_detail_form.node_params=node_params
         else: #runs when params are initialized -> i.e. before __post_init__()
             self.node_detail_form = NodeDetailForm(node_params=node_params,typ=self.typ, pos=self.pos)
+            
+    @property
+    def fields(self):
+        node_fields = self.node_detail_form.fields
+        return node_fields
+
+    @fields.setter
+    def fields(self, fields):
+        if hasattr(self,"node_detail_form"):
+            self.node_detail_form.fields = fields
 
     def __hash__(self):
         return hash((self.typ, self.uid))
