@@ -56,6 +56,19 @@ class Node:
             self.node_detail_form.node_params=node_params
         else: #runs when params are initialized -> i.e. before __post_init__()
             self.node_detail_form = NodeDetailForm(node_params=node_params,typ=self.typ, pos=self.pos)
+            
+    @property
+    def fields(self):
+        node_fields = self.node_detail_form.fields
+        return node_fields
+
+    @fields.setter
+    def fields(self, fields):
+        if hasattr(self,"node_detail_form"):
+            self.node_detail_form.fields = fields
+            
+    def __post_init__(self):
+        self.node_detail_form.node_uid = self.uid
 
     def __hash__(self):
         return hash((self.typ, self.uid))
@@ -71,18 +84,30 @@ class Node:
             else:
                 raise AttributeError(f"Attribute '{key}' cannot be updated, as it does not exist")
 
-    def execute(self):
+    def execute(self, is_executed_as_prototype_job=False):
+        """Execute the node's pipeline function handler.
+
+        Args:
+            is_executed_as_prototype_job (bool, optional): Flag indicating if the execution is
+                done as a prototype job. If set to True or the handler hasn't got a `direct_execute` method, `execute` 
+                is called, else `direct_execute` is called. Defaults to False.
+
+        Returns:
+            Any: The result of executing the pipeline function handler.
+        Raises:
+            NotImplementedError: If the node type is not implemented yet.
+        """
+    
         try:
             handler = pipeline_function_handler_dict[self.typ]
         except KeyError as e:
             raise NotImplementedError(f'Node type {self.typ} is not implemented yet.') from e
 
         params = self.get_params()
-        if hasattr(handler, "direct_execute"):
-            # should return value only in case of if condition
-            result = handler.direct_execute(**params)
+        if is_executed_as_prototype_job or not hasattr(handler, "direct_execute"):
+            result = handler.execute(self.node_detail_form)
         else:
-            result = handler.execute(list(params.values()))
+            result = handler.direct_execute(**params)
 
         return result
 
