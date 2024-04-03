@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Literal, Optional
 
@@ -12,7 +12,6 @@ class Session:
     ip: Optional[str] = None  # only in desktop/execution core version
     mac_address: Optional[str] = None  # only in desktop/execution core version
     hostname: Optional[str] = None  # only in desktop/execution core version
-    start_datetime_utc: datetime = datetime.utcnow()
-    last_datetime_utc: datetime = datetime.utcnow()
-    total_time: int = 0
+    started_on: datetime = field(default_factory=datetime.utcnow)
+    ended_on: datetime = field(default_factory=datetime.utcnow)
     uid: Optional[str] = None
