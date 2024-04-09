@@ -12,6 +12,6 @@ class Session:
     ip: Optional[str] = None  # only in desktop/execution core version
     mac_address: Optional[str] = None  # only in desktop/execution core version
     hostname: Optional[str] = None  # only in desktop/execution core version
-    started_on: datetime = field(default_factory=datetime.utcnow)
-    ended_on: datetime = field(default_factory=datetime.utcnow)
+    start_datetime_utc: datetime = field(default_factory=datetime.utcnow)
+    last_datetime_utc: datetime = field(default_factory=datetime.utcnow)
     uid: Optional[str] = None
