@@ -11,5 +11,6 @@ class Database:
     username: str
     password: str
     dialect: str
+    new: bool
     project_uid: str  # = "0"
     uid: Optional[str] = None
