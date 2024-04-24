@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, TypedDict
+from typing import Optional
+
+from typing_extensions import TypedDict
 
 from forloop_common_structures.core.edge import Edge
 from forloop_common_structures.core.node import Node
