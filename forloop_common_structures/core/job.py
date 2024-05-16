@@ -3,24 +3,24 @@ from datetime import datetime
 from typing import Optional, TypedDict
 
 from forloop_common_structures.core.edge import Edge
+from forloop_common_structures.core.initial_variable import InitialVariable
 from forloop_common_structures.core.node import Node
-from forloop_common_structures.core.variable import Variable
 from forloop_modules.queries.db_model_templates import JobStatusEnum
 
 
 @dataclass
 class NodeJob:
-    pipeline_uid: str  # TODO: Remove when PrototypeJobs are implemented
+    pipeline_uid: str
     node: Node
+    pipeline_job_uid: int
 
     uid: Optional[str] = None
-    machine_uid: Optional[str] = None  # TODO: Remove when PrototypeJobs are implemented
+    machine_uid: Optional[str] = None
     status: JobStatusEnum = JobStatusEnum.QUEUED
     created_at: datetime = field(default_factory=datetime.utcnow)
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     message: Optional[str] = None
-    pipeline_job_uid: Optional[int] = None
 
     def __post_init__(self):
         # Deserialize dict into a Node if NodeJob is instantiated from a JSON
@@ -39,7 +39,7 @@ class NodeJob:
 class PipelineBuildingBlocks(TypedDict):
     nodes: list[Node]
     edges: list[Edge]
-    variables: list[Variable]
+    variables: list[InitialVariable]
 
 
 @dataclass
@@ -66,7 +66,7 @@ class PipelineJob:
     # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
     def _deserialize_pipeline_elements(self) -> None:
         """Deserialize nodes, edges, variables into list of objects in case the Job was instantiated from JSON."""
-        name_mapping = {"nodes": Node, "edges": Edge, "variables": Variable}
+        name_mapping = {"nodes": Node, "edges": Edge, "variables": InitialVariable}
         deserialized_elements: PipelineBuildingBlocks = {"nodes": [], "edges": [], "variables": []}
 
         for element_type, elements in self.pipeline_elements.items():
