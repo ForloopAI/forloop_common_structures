@@ -6,7 +6,6 @@ from typing import Optional
 class User:
     email: str
     auth0_subject_id: str
-    name: str
     given_name: str
     family_name: str
     picture_url: str
