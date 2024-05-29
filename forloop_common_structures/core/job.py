@@ -54,6 +54,7 @@ class PipelineJob:
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     message: Optional[str] = None
+    was_created_by_trigger: bool
 
     def __post_init__(self) -> None:
         # Deserialize into Enum if instantiated from JSON
