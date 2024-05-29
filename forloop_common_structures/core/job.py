@@ -46,6 +46,7 @@ class PipelineBuildingBlocks(TypedDict):
 class PipelineJob:
     pipeline_uid: str
     pipeline_elements: PipelineBuildingBlocks  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
+    was_created_by_trigger: bool
 
     uid: Optional[str] = None
     machine_uid: Optional[str] = None
@@ -54,7 +55,6 @@ class PipelineJob:
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     message: Optional[str] = None
-    was_created_by_trigger: bool
 
     def __post_init__(self) -> None:
         # Deserialize into Enum if instantiated from JSON
