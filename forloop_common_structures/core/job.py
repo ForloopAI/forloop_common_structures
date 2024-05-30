@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, TypedDict
+from typing import Literal, Optional, TypedDict
 
 from forloop_common_structures.core.edge import Edge
 from forloop_common_structures.core.initial_variable import InitialVariable
@@ -46,6 +46,7 @@ class PipelineBuildingBlocks(TypedDict):
 class PipelineJob:
     pipeline_uid: str
     pipeline_elements: PipelineBuildingBlocks  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
+    trigger_mode: Literal['trigger', 'manual']
 
     uid: Optional[str] = None
     machine_uid: Optional[str] = None
