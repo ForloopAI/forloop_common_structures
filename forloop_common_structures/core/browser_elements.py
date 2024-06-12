@@ -4,6 +4,7 @@ from typing import Optional
 
 @dataclass
 class Screenshot:
+    url: str
     screenshot: str
     prototype_job_uid: str
     uid: Optional[str] = None
