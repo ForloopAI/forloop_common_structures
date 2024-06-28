@@ -8,7 +8,8 @@ from forloop_modules.queries.db_model_templates import UserSubscriptionPlanPayme
 @dataclass
 class SubscriptionPlan:
     name: str
-    system_unique_name: str
+    stripe_id: str
+    lookup_key: str
     price: float
     total_credits: int
     max_concurrent_pipelines: int
