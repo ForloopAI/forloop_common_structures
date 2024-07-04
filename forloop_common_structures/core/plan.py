@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
-
+from forloop_modules.queries.db_model_templates import UserSubscriptionPlanStatusEnum
 
 @dataclass
 class SubscriptionPlan:
@@ -20,8 +20,8 @@ class UserSubscriptionPlan:
     user_uid: str # Foreign Key Many-to-1
     subscription_plan_uid: str # Foreign Key Many-to-1
     end_datetime_utc: datetime
-    # total_credits: int
+    start_datetime_utc: datetime
+    status: UserSubscriptionPlanStatusEnum = UserSubscriptionPlanStatusEnum.UNPAID
     consumed_credits: int = 0
-    start_datetime_utc: datetime = field(default_factory=datetime.utcnow)
     uid: Optional[str] = None
 
