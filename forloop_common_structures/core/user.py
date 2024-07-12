@@ -7,6 +7,7 @@ from typing import Optional
 class User:
     email: str
     auth0_subject_id: str
+    stripe_id: str
     given_name: str
     family_name: str
     picture_url: str
