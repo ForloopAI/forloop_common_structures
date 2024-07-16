@@ -5,7 +5,7 @@ from typing import Literal, Optional, TypedDict
 from forloop_common_structures.core.edge import Edge
 from forloop_common_structures.core.initial_variable import InitialVariable
 from forloop_common_structures.core.node import Node
-from forloop_modules.queries.db_model_templates import JobStatusEnum, CreatedBy
+from forloop_modules.queries.db_model_templates import CreatedBy, JobStatusEnum
 
 
 @dataclass
@@ -48,7 +48,6 @@ class PipelineJob:
     pipeline_elements: PipelineBuildingBlocks  # TODO: Discuss and remove (?) when PrototypeJobs are implemented - current pipeline on the backend should be used
     trigger_mode: Literal['trigger', 'manual']
     created_by: CreatedBy
-    context: list[] = field(default_factory=list)
 
     uid: Optional[str] = None
     machine_uid: Optional[str] = None
