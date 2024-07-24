@@ -15,9 +15,9 @@ class Trigger:
     name: str
     type: TriggerType
     params: Union[TimeTriggerParams, PipelineTriggerParams]
-    last_run_date: datetime
     pipeline_uid: str
     project_uid: str
+    last_run_date: Optional[datetime] = None
     uid: Optional[str] = None
 
     def __post_init__(self):
