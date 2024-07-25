@@ -121,6 +121,7 @@ class PrototypeJob:
     created_at: datetime = field(default_factory=datetime.utcnow)
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    trigger_mode: Literal['trigger', 'manual', 'system']
 
     def __post_init__(self) -> None:
         # Deserialize into Enum if instantiated from JSON
