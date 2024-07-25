@@ -115,9 +115,9 @@ class OperationJob:
 @dataclass
 class PrototypeJob:
     pipeline_uid: str
+    trigger_mode: Literal['trigger', 'manual', 'system']
     machine_uid: Optional[str] = None
     uid: Optional[str] = None
-    trigger_mode: Literal['trigger', 'manual', 'system']
     status: JobStatusEnum = JobStatusEnum.QUEUED
     created_at: datetime = field(default_factory=datetime.utcnow)
     started_at: Optional[datetime] = None
