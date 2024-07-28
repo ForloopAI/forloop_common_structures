@@ -7,6 +7,7 @@ class Pipeline:
     name: str
     start_node_uid: str = "0"
     is_active: bool = False
+    system_reactivation_status: Optional[str] = None
     active_nodes_uids: list = field(default_factory=list)
     remaining_nodes_uids: list = field(default_factory=list)
 
