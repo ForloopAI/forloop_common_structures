@@ -1,7 +1,9 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+
 from forloop_modules.queries.db_model_templates import UserSubscriptionPlanStatusEnum
+
 
 @dataclass
 class SubscriptionPlan:
@@ -12,6 +14,7 @@ class SubscriptionPlan:
     total_credits: int
     max_concurrent_pipelines: int
     max_collaborators: int
+    is_active: bool
     description: str
     uid: Optional[str] = None
 
