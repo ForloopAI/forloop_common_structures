@@ -115,6 +115,7 @@ class OperationJob:
 @dataclass
 class PrototypeJob:
     pipeline_uid: str
+    trigger_mode: Literal['trigger', 'manual', 'system']
     machine_uid: Optional[str] = None
     uid: Optional[str] = None
     status: JobStatusEnum = JobStatusEnum.QUEUED
