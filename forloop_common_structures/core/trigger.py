@@ -23,6 +23,7 @@ class Trigger:
     def __post_init__(self):
         if self.type == TriggerType.TIME and isinstance(self.params["first_run_date"], str):
             self.params = TimeTriggerParams(
+                **self.params,
                 first_run_date=datetime.fromisoformat(self.params["first_run_date"]),
                 frequency=TriggerFrequencyEnum(self.params["frequency"])
             )
