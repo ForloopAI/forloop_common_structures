@@ -16,7 +16,6 @@ class SubscriptionPlan:
     max_collaborators: int
     is_active: bool
     description: str
-    is_active: bool
     uid: Optional[str] = None
 
 @dataclass
