@@ -23,6 +23,7 @@ class Variable:
     def __post_init__(self) -> None:
         if self.type is None:
             self.type = type(self.value).__name__
+            self.size = 0
 
         if self.size is None:
             try:
