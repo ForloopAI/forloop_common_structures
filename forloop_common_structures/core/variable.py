@@ -33,7 +33,10 @@ def get_digits(num: Number) -> int:
 
 @dataclass
 class BaseVariable:
-    """Base class for variable and initial_variable objects with common initialization logic."""
+    """
+    Base class for variable and initial_variable objects with common initialization logic and
+    dunder methods.
+    """
 
     name: str
     value: VariableValueTypes
@@ -92,6 +95,8 @@ class Variable(BaseVariable):
 
 @dataclass
 class InitialVariable(BaseVariable):
-    """Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate."""
+    """
+    Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate.
+    """
 
     pipeline_uid: str = "0"
