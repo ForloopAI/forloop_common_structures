@@ -49,6 +49,8 @@ class BaseVariable:
         if self.size is None:
             if self.value is None:
                 self.size = 0
+            elif isinstance(self.value, Number):
+                self.size = get_digits(self.value)
             elif isinstance(self.value, (pd.DataFrame, pd.Series, np.ndarray)):
                 self.size = self.value.size
             else:
