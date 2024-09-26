@@ -8,6 +8,7 @@ import pandas as pd
 
 VariableValueTypes = Union[str, Number, pd.DataFrame, list, dict]
 
+
 def get_digits(num: Number) -> int:
     """
     Returns the number of digits in a given number.
@@ -75,7 +76,9 @@ class BaseVariable:
             if key in vars(self).keys():
                 setattr(self, key, value)
             else:
-                raise AttributeError(f"Attribute '{key}' cannot be updated, as it does not exist")
+                raise AttributeError(
+                    f"Attribute '{key}' cannot be updated, as it does not exist"
+                )
 
 
 @dataclass
@@ -85,7 +88,8 @@ class Variable(BaseVariable):
     """
 
     pipeline_job_uid: str = "0"
-            
+
+
 @dataclass
 class InitialVariable(BaseVariable):
     """Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate."""
