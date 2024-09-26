@@ -9,15 +9,14 @@ VariableValueTypes = Union[str, Number, pd.DataFrame, list, dict]
 
 
 @dataclass
-class Variable:
-    """Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate."""
+class BaseVariable:
+    """Base class for variable and initial_variable objects with common initialization logic."""
 
     name: str
     value: VariableValueTypes
     type: Optional[str] = None
     size: Optional[int] = None
     is_result: bool = False
-    pipeline_job_uid: str = "0"
     project_uid: str = "0"
     uid: Optional[str] = None
 
@@ -53,3 +52,18 @@ class Variable:
                 setattr(self, key, value)
             else:
                 raise AttributeError(f"Attribute '{key}' cannot be updated, as it does not exist")
+
+
+@dataclass
+class Variable(BaseVariable):
+    """
+    Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate.
+    """
+
+    pipeline_job_uid: str = "0"
+            
+@dataclass
+class InitialVariable(BaseVariable):
+    """Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate."""
+
+    pipeline_uid: str = "0"
