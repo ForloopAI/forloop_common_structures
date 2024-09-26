@@ -7,28 +7,6 @@ import pandas as pd
 VariableValueTypes = Union[str, Number, pd.DataFrame, list, dict]
 
 
-def get_digits(num: Number) -> int:
-    """
-    Returns the number of digits in a given number.
-
-    Args:
-        num (Number): The number for which to calculate the number of digits.
-
-    Returns:
-        int: The number of digits in the integer part of the number.
-
-    Notes:
-        - If the number is 0, the function returns 1 since the number '0' has 1 digit.
-        - The function uses logarithmic computation (base 10) to determine the number of digits.
-        - The function works for both positive and negative numbers by taking the absolute value.
-        - For floating-point numbers, this only counts the digits in the integer part of the number.
-    """
-    if num == 0:
-        return 1
-    else:
-        return int(math.log10(abs(num))) + 1
-
-
 @dataclass
 class Variable:
     """Class containing Dataframes, Lists, Dicts (JSON) - objects visible and possible to manipulate."""
