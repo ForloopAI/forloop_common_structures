@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Literal, Optional, TypedDict
 
 from forloop_common_structures.core.edge import Edge
-from forloop_common_structures.core.variable import InitialVariable
+from forloop_common_structures.core.initial_variable import InitialVariable
 from forloop_common_structures.core.node import Node
 from forloop_modules.queries.db_model_templates import CreatedBy, JobStatusEnum
 
