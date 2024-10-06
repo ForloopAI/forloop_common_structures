@@ -14,7 +14,7 @@ class Variable:
     name: str
     value: VariableValueTypes
     type: Optional[str] = None
-    size: Optional[int] = None
+    size: Union[int, tuple, None] = None
     is_result: bool = False
     pipeline_job_uid: str = "0"
     project_uid: str = "0"
