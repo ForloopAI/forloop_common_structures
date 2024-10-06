@@ -235,30 +235,33 @@ class DBVariable(dh.AbstractModel):
     name: str  # Check constraint on name/pipeline_uid
     value: dh.Jsonable
     type: str = None
-    size: int = None
+    size: dh.Jsonable = None
     is_result: bool = False
 
-    pipeline_job_uid: str # Foreign Key Many-to-1
+    pipeline_job_uid: str  # Foreign Key Many-to-1
     project_uid: int  # Foreign Key Many-to-1
 
 
 def cast_variable_types_to_app(variables_df: pd.DataFrame) -> pd.DataFrame:
     """Cast DB datatypes to in-app python datatypes."""
     ##### TODO for Jakub: check variables here:
-    #print(variables_df) #returns this: Columns: [uid, name, value, type, size, pipeline_uid, project_uid] (doesnt match row below)
+    # print(variables_df) #returns this: Columns: [uid, name, value, type, size, pipeline_uid, project_uid] (doesnt match row below)
     variables_df = variables_df.astype(
-        {"uid": str, "value": str, "project_uid": str,  "pipeline_job_uid": str, "is_result": bool}
+        {"uid": str, "value": str, "project_uid": str, "pipeline_job_uid": str, "is_result": bool}
     )
     non_df_variables = variables_df["type"] != "DataFrame"
-    variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].map(json.loads)
+    variables_df["size"] = variables_df["size"].map(json.loads)
+    variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].map(
+        json.loads
+    )
     return variables_df
 
 
 def cast_variable_types_to_db(variables_df: pd.DataFrame) -> pd.DataFrame:
     """Cast in-app python datatypes to DB datatypes."""
     variables_df = variables_df.drop("uid", axis=1)
-    variables_df = variables_df.astype({"project_uid": int,  "pipeline_job_uid": int})
-    variables_df["value"] = variables_df["value"].map(json.dumps)
+    variables_df = variables_df.astype({"project_uid": int, "pipeline_job_uid": int})
+    variables_df[["value", "size"]] = variables_df[["value", "size"]].applymap(json.dumps)
     variables_df = variables_df.map(escape_if_string)
     return variables_df
 
@@ -270,22 +273,23 @@ class DBInitialVariable(dh.AbstractModel):
     value: dh.Jsonable
     is_result: bool = False
     type: str = None
-    size: int = None
+    size: dh.Jsonable = None
     is_result: bool = False
 
     pipeline_uid: int  # Foreign Key Many-to-1
     project_uid: int  # Foreign Key Many-to-1
 
 
-
 def cast_initial_variable_types_to_app(initial_variables_df: pd.DataFrame) -> pd.DataFrame:
     """Cast DB datatypes to in-app python datatypes."""
     initial_variables_df = initial_variables_df.astype(
         {"uid": str, "value": str, "pipeline_uid": str, "project_uid": str, "is_result": bool}
-
     )
     non_df_variables = initial_variables_df["type"] != "DataFrame"
-    initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[non_df_variables, "value"].map(json.loads)
+    initial_variables_df["size"] = initial_variables_df["size"].map(json.loads)
+    initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[
+        non_df_variables, "value"
+    ].map(json.loads)
     return initial_variables_df
 
 
@@ -293,7 +297,9 @@ def cast_initial_variable_types_to_db(initial_variables_df: pd.DataFrame) -> pd.
     """Cast in-app python datatypes to DB datatypes."""
     initial_variables_df = initial_variables_df.drop("uid", axis=1)
     initial_variables_df = initial_variables_df.astype({"pipeline_uid": int, "project_uid": int})
-    initial_variables_df["value"] = initial_variables_df["value"].map(json.dumps)
+    initial_variables_df[["value", "size"]] = initial_variables_df[["value", "size"]].applymap(
+        json.dumps
+    )
     initial_variables_df = initial_variables_df.map(escape_if_string)
     return initial_variables_df
 
