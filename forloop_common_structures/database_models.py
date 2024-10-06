@@ -507,6 +507,37 @@ class DBUserSubscriptionPlan(dh.AbstractModel):
     user_uid: str # Foreign Key Many-to-1
     subscription_plan_uid: str # Foreign Key Many-to-1
 
+
+class DBUserResources(dh.AbstractModel):
+    # TODO: probably split into User > UserResources < Resources if there will be more fields for Resource
+
+    user_uid: int   # Foreign Key Many-to-1
+    resource_type: str      # TODO: enum
+    resource_name: str
+    created_at: datetime
+    removed_at: datetime
+
+
+def cast_user_resource_types_to_app(user_resources_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    user_resources_df = gdtm.cast_types_to_app(user_resources_df)
+
+    user_resources_df['user_uid'] = user_resources_df['user_uid'].astype(str)
+    user_resources_df[["removed_at", "created_at"]] = user_resources_df[["removed_at", "created_at"]].astype(object).replace(pd.NaT, None)
+
+    return user_resources_df
+
+
+def cast_user_resource_types_to_db(user_resources_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    user_resources_df = user_resources_df.astype({"user_uid": str})
+    user_resources_df = user_resources_df.drop("uid", axis=1)
+    user_resources_df[["removed_at", "created_at"]] = user_resources_df[["removed_at", "created_at"]].astype(object).replace(pd.NaT, None)
+    user_resources_df = user_resources_df.map(escape_if_string)
+
+    return user_resources_df
+
+
 def cast_user_subscription_plan_types_to_app(user_subscription_plans_df: pd.DataFrame) -> pd.DataFrame:
     """Cast DB datatypes to in-app python datatypes."""
     user_subscription_plans_df=gdtm.cast_types_to_app(user_subscription_plans_df)
