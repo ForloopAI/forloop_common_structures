@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 
 @dataclass
@@ -12,6 +12,6 @@ class Screenshot:
 
 @dataclass
 class Elements:
-    elements: list[dict]
+    elements: Union[list[dict], dict[str, dict]]
     prototype_job_uid: str
     uid: Optional[str] = None
