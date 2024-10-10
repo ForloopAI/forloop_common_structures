@@ -587,6 +587,23 @@ class DBUserProjectLink(dh.AbstractModel):
 class DBTemplatePipelineMapping(dh.AbstractModel):
     template_name: str
     pipeline_uid: int
+    owner_user_uid: int
+    screenshot: dh.Blob = None
+
+
+def cast_template_mappings_types_to_app(temp_mappings_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    temp_mappings_df = gdtm.cast_types_to_app(temp_mappings_df)
+    temp_mappings_df["screenshot"] = temp_mappings_df["screenshot"].apply(base64.b64encode)
+    return temp_mappings_df
+
+
+def cast_template_mappings_types_to_db(temp_mappings_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    temp_mappings_df = gdtm.cast_types_to_db(temp_mappings_df)
+    temp_mappings_df["screenshot"] = temp_mappings_df["screenshot"].apply(base64.b64decode)
+    temp_mappings_df = temp_mappings_df.map(escape_if_string)
+    return temp_mappings_df
 
 
 class DBTrigger(dh.AbstractModel):
