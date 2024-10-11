@@ -807,15 +807,20 @@ class GenericDbTypeMapper:
 gdtm=GenericDbTypeMapper()
 
 
-
 def escape_if_string(variable: Any) -> Any:
-    """Escape a variable if it's a string."""
-    if isinstance(variable, str):
-        return variable.replace("'", "\\'").replace('"', '\\"')
-    #if isinstance(db1, dh.MysqlDb) and isinstance(variable, str):
-    #    return db1.connection.escape_string(variable)
-    return variable
+    """Escape a variable if it's a string.
 
+    Replaces single-quotes with single-quote pairs, backlashes with double-backlashes and escapes
+    double-quotes.
+
+    Note:
+        Old implementation using db connector was moved to a new function
+        'escape_if_string_database_dependent'.
+    """
+    if isinstance(variable, str):
+        variable = variable.replace("'", "''").replace("\\", "\\\\").replace('"', '\\"')
+
+    return variable
 
 
 def escape_if_string_database_dependent(variable: Any, db1) -> Any:
