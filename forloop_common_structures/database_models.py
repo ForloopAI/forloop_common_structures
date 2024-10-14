@@ -604,7 +604,7 @@ def cast_template_mappings_types_to_db(temp_mappings_df: pd.DataFrame) -> pd.Dat
     """Cast in-app python datatypes to DB datatypes."""
     temp_mappings_df = gdtm.cast_types_to_db(temp_mappings_df)
     temp_mappings_df["screenshot"] = temp_mappings_df["screenshot"].apply(
-        lambda x: base64.decode(x) if x is not None else None
+        lambda x: base64.b64decode(x) if x is not None else None
     )
     temp_mappings_df = temp_mappings_df.map(escape_if_string)
     return temp_mappings_df
@@ -798,7 +798,9 @@ class GenericDbTypeMapper:
     
     def cast_types_to_db(self, df: pd.DataFrame) -> pd.DataFrame:
         """Cast in-app python datatypes to DB datatypes."""
-        df = df.drop("uid", axis=1)
+        if "uid" in df.columns:
+            df = df.drop("uid", axis=1)
+
         for i,column in enumerate(df.columns):
             if "uid" == column[-3:]: #matches uid, pipeline_uid, project_uid etc.
                 df = df.astype({column: int})
