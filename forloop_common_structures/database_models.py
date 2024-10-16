@@ -794,7 +794,7 @@ gdtm=GenericDbTypeMapper()
 def escape_if_string(variable: Any) -> Any:
     """Escape a variable if it's a string."""
     if isinstance(variable, str):
-        return variable.replace("'", "\\'").replace('"', '\\"')
+        return variable.replace("\\","\\\\").replace("'", "\\'").replace('"', '\\"')
     #if isinstance(db1, dh.MysqlDb) and isinstance(variable, str):
     #    return db1.connection.escape_string(variable)
     return variable
