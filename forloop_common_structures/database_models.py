@@ -824,8 +824,9 @@ def escape_if_string(variable: Any) -> Any:
         'escape_if_string_database_dependent'.
     """
     if isinstance(variable, str):
-        variable = variable.replace("'", "''").replace("\\", "\\\\").replace('"', '\\"')
-
+        return variable.replace("\\","\\\\").replace("'", "\\'").replace('"', '\\"')
+    #if isinstance(db1, dh.MysqlDb) and isinstance(variable, str):
+    #    return db1.connection.escape_string(variable)
     return variable
 
 
