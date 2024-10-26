@@ -587,6 +587,27 @@ class DBUserProjectLink(dh.AbstractModel):
 class DBTemplatePipelineMapping(dh.AbstractModel):
     template_name: str
     pipeline_uid: int
+    owner_user_uid: int
+    screenshot: dh.Blob = None
+
+
+def cast_template_mappings_types_to_app(temp_mappings_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    temp_mappings_df = gdtm.cast_types_to_app(temp_mappings_df)
+    temp_mappings_df["screenshot"] = temp_mappings_df["screenshot"].apply(
+        lambda x: base64.b64encode(x) if x is not None else None
+    )
+    return temp_mappings_df
+
+
+def cast_template_mappings_types_to_db(temp_mappings_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    temp_mappings_df = gdtm.cast_types_to_db(temp_mappings_df)
+    temp_mappings_df["screenshot"] = temp_mappings_df["screenshot"].apply(
+        lambda x: base64.b64decode(x) if x is not None else None
+    )
+    temp_mappings_df = temp_mappings_df.map(escape_if_string)
+    return temp_mappings_df
 
 
 class DBTrigger(dh.AbstractModel):
@@ -777,7 +798,9 @@ class GenericDbTypeMapper:
     
     def cast_types_to_db(self, df: pd.DataFrame) -> pd.DataFrame:
         """Cast in-app python datatypes to DB datatypes."""
-        df = df.drop("uid", axis=1)
+        if "uid" in df.columns:
+            df = df.drop("uid", axis=1)
+
         for i,column in enumerate(df.columns):
             if "uid" == column[-3:]: #matches uid, pipeline_uid, project_uid etc.
                 df = df.astype({column: int})
@@ -790,15 +813,21 @@ class GenericDbTypeMapper:
 gdtm=GenericDbTypeMapper()
 
 
-
 def escape_if_string(variable: Any) -> Any:
-    """Escape a variable if it's a string."""
+    """Escape a variable if it's a string.
+
+    Replaces single-quotes with single-quote pairs, backlashes with double-backlashes and escapes
+    double-quotes.
+
+    Note:
+        Old implementation using db connector was moved to a new function
+        'escape_if_string_database_dependent'.
+    """
     if isinstance(variable, str):
         return variable.replace("\\","\\\\").replace("'", "\\'").replace('"', '\\"')
     #if isinstance(db1, dh.MysqlDb) and isinstance(variable, str):
     #    return db1.connection.escape_string(variable)
     return variable
-
 
 
 def escape_if_string_database_dependent(variable: Any, db1) -> Any:
