@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 
 @dataclass
@@ -12,6 +12,7 @@ class Pipeline:
     remaining_nodes_uids: list = field(default_factory=list)
 
     project_uid: str = "0"
+    endpoint_body_model: dict[str, Any] = field(default_factory=dict)
     uid: Optional[str] = None
 
     def update(self, **kwargs) -> None:
@@ -19,10 +20,12 @@ class Pipeline:
             if key in vars(self).keys():
                 setattr(self, key, value)
             else:
-                raise AttributeError(f"Attribute '{key}' cannot be updated, as it does not exist")
+                raise AttributeError(
+                    f"Attribute '{key}' cannot be updated, as it does not exist"
+                )
 
     def run(self):
         self.is_active = True
 
-    def stop(self):  #todo: pause
+    def stop(self):  # todo: pause
         self.is_active = False
