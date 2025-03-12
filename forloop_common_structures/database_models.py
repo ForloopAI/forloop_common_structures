@@ -365,9 +365,9 @@ def cast_pipeline_job_types_to_app(pipeline_jobs_df: pd.DataFrame) -> pd.DataFra
     pipeline_jobs_df[["created_at", "started_at", "completed_at"]
                     ] = pipeline_jobs_df[["created_at", "started_at",
                                           "completed_at"]].astype(object).replace(pd.NaT, None)
-    pipeline_jobs_df[["pipeline_elements",
-                      "created_by"]] = pipeline_jobs_df[["pipeline_elements",
-                                                           "created_by"]].map(json.loads)
+    pipeline_jobs_df[["created_by"]] = pipeline_jobs_df[["created_by"]].map(json.loads)
+    if "pipeline_elements" in pipeline_jobs_df.columns: #this can be potentially omitted - due to performance issues
+        pipeline_jobs_df[["pipeline_elements"]] = pipeline_jobs_df[["pipeline_elements"]].map(json.loads)
     pipeline_jobs_df["status"] = pipeline_jobs_df["status"].map(lambda x: JobStatusEnum(x))
     return pipeline_jobs_df
 
