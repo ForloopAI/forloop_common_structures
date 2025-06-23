@@ -487,6 +487,30 @@ def cast_user_log_types_to_db(user_logs_df: pd.DataFrame) -> pd.DataFrame:
     #user_logs_df=gdtm.cast_types_to_db(user_logs_df) #raised an error because its not equivalent to other casting functions (missing uid)
     return user_logs_df
 
+##DB Table for console prints##
+class DBConsolePrint(dh.AbstractModel):
+    message: str
+    type: str
+    datetime_utc: datetime = datetime.utcnow()
+
+    project_uid: int  # Foreign Key Many-to-1
+
+def cast_console_print_types_to_app(console_print_logs_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    console_print_logs_df=gdtm.cast_types_to_app(console_print_logs_df)
+    console_print_logs_df["datetime_utc"] = console_print_logs_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    
+    return console_print_logs_df
+
+def cast_console_print_to_db(console_print_logs_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    
+    console_print_logs_df = console_print_logs_df.astype({"project_uid": int})
+    console_print_logs_df["datetime_utc"] = console_print_logs_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    console_print_logs_df = console_print_logs_df.map(escape_if_string)
+    
+    #user_logs_df=gdtm.cast_types_to_db(user_logs_df) #raised an error because its not equivalent to other casting functions (missing uid)
+    return console_print_logs_df
 
 class DBUserFlowStep(dh.AbstractModel):
     user_uid: int # Foreign Key Many-to-1
