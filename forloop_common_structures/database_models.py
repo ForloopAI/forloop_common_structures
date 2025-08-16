@@ -251,8 +251,14 @@ def cast_variable_types_to_app(variables_df: pd.DataFrame) -> pd.DataFrame:
     )
     non_df_variables = variables_df["type"] != "DataFrame"
     variables_df["size"] = variables_df["size"].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in size column
+    variables_df["size"] = variables_df["size"].astype(object).where(~variables_df["size"].isna(), None)
     variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].map(
         json.loads
+    )
+    # Ensure JSON-safe None instead of NaN in value column (edge cases)
+    variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].astype(object).where(
+        ~variables_df.loc[non_df_variables, "value"].isna(), None
     )
     return variables_df
 
@@ -287,9 +293,19 @@ def cast_initial_variable_types_to_app(initial_variables_df: pd.DataFrame) -> pd
     )
     non_df_variables = initial_variables_df["type"] != "DataFrame"
     initial_variables_df["size"] = initial_variables_df["size"].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in size column
+    initial_variables_df["size"] = initial_variables_df["size"].astype(object).where(
+        ~initial_variables_df["size"].isna(), None
+    )
     initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[
         non_df_variables, "value"
     ].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in value column (edge cases)
+    initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[
+        non_df_variables, "value"
+    ].astype(object).where(
+        ~initial_variables_df.loc[non_df_variables, "value"].isna(), None
+    )
     return initial_variables_df
 
 
