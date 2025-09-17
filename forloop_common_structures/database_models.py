@@ -684,7 +684,7 @@ def cast_trigger_types_to_db(triggers_df: pd.DataFrame) -> pd.DataFrame:
 
 class DBScript(dh.AbstractModel):
     script_name: str
-    text: str
+    text: dh.LongText
     project_uid: str
 
 
