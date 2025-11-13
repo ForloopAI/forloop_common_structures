@@ -25,10 +25,14 @@ class InitialVariable:
             self.type = type(self.value).__name__
 
         if self.size is None:
-            try:
-                self.size = len(self.value)
-            except TypeError:
-                self.size = 1
+            # For None values, keep size as None to avoid auto-calculation issues
+            if self.value is None:
+                self.size = None
+            else:
+                try:
+                    self.size = len(self.value)
+                except TypeError:
+                    self.size = 1
 
     def __str__(self) -> str:
         return f"{self.value}"
