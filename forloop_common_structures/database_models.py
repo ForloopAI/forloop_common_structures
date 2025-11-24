@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import base64
 import dbhydra.dbhydra_core as dh
 import pandas as pd
@@ -477,7 +477,7 @@ def cast_prototype_job_types_to_db(prototype_jobs_df: pd.DataFrame) -> pd.DataFr
 class DBUserLog(dh.AbstractModel):
     message: str
     severity: str
-    datetime_utc: datetime = datetime.utcnow()
+    datetime_utc: datetime = datetime.now()
 
     project_uid: int  # Foreign Key Many-to-1
 
@@ -503,6 +503,27 @@ def cast_user_log_types_to_db(user_logs_df: pd.DataFrame) -> pd.DataFrame:
     #user_logs_df=gdtm.cast_types_to_db(user_logs_df) #raised an error because its not equivalent to other casting functions (missing uid)
     return user_logs_df
 
+## DB Table for console logs ##
+class DBConsoleLogs(dh.AbstractModel):
+    message: str
+    type: str
+    datetime_utc: datetime = datetime.now()
+
+    project_uid: int  # Foreign Key Many-to-1
+
+
+def cast_console_log_types_to_app(console_log_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    console_log_df = gdtm.cast_types_to_app(console_log_df)
+    console_log_df["datetime_utc"] = console_log_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    return console_log_df
+
+def cast_console_log_to_db(console_log_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    console_log_df = console_log_df.astype({"project_uid": int})
+    console_log_df["datetime_utc"] = console_log_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    console_log_df = console_log_df.map(escape_if_string)
+    return console_log_df
 
 class DBUserFlowStep(dh.AbstractModel):
     user_uid: int # Foreign Key Many-to-1
