@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import base64
 import dbhydra.dbhydra_core as dh
 import pandas as pd
@@ -251,8 +251,14 @@ def cast_variable_types_to_app(variables_df: pd.DataFrame) -> pd.DataFrame:
     )
     non_df_variables = variables_df["type"] != "DataFrame"
     variables_df["size"] = variables_df["size"].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in size column
+    variables_df["size"] = variables_df["size"].astype(object).where(~variables_df["size"].isna(), None)
     variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].map(
         json.loads
+    )
+    # Ensure JSON-safe None instead of NaN in value column (edge cases)
+    variables_df.loc[non_df_variables, "value"] = variables_df.loc[non_df_variables, "value"].astype(object).where(
+        ~variables_df.loc[non_df_variables, "value"].isna(), None
     )
     return variables_df
 
@@ -287,9 +293,19 @@ def cast_initial_variable_types_to_app(initial_variables_df: pd.DataFrame) -> pd
     )
     non_df_variables = initial_variables_df["type"] != "DataFrame"
     initial_variables_df["size"] = initial_variables_df["size"].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in size column
+    initial_variables_df["size"] = initial_variables_df["size"].astype(object).where(
+        ~initial_variables_df["size"].isna(), None
+    )
     initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[
         non_df_variables, "value"
     ].map(json.loads)
+    # Ensure JSON-safe None instead of NaN in value column (edge cases)
+    initial_variables_df.loc[non_df_variables, "value"] = initial_variables_df.loc[
+        non_df_variables, "value"
+    ].astype(object).where(
+        ~initial_variables_df.loc[non_df_variables, "value"].isna(), None
+    )
     return initial_variables_df
 
 
@@ -461,7 +477,7 @@ def cast_prototype_job_types_to_db(prototype_jobs_df: pd.DataFrame) -> pd.DataFr
 class DBUserLog(dh.AbstractModel):
     message: str
     severity: str
-    datetime_utc: datetime = datetime.utcnow()
+    datetime_utc: datetime = datetime.now()
 
     project_uid: int  # Foreign Key Many-to-1
 
@@ -487,6 +503,27 @@ def cast_user_log_types_to_db(user_logs_df: pd.DataFrame) -> pd.DataFrame:
     #user_logs_df=gdtm.cast_types_to_db(user_logs_df) #raised an error because its not equivalent to other casting functions (missing uid)
     return user_logs_df
 
+## DB Table for console logs ##
+class DBConsoleLogs(dh.AbstractModel):
+    message: str
+    type: str
+    datetime_utc: datetime = datetime.now()
+
+    project_uid: int  # Foreign Key Many-to-1
+
+
+def cast_console_log_types_to_app(console_log_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    console_log_df = gdtm.cast_types_to_app(console_log_df)
+    console_log_df["datetime_utc"] = console_log_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    return console_log_df
+
+def cast_console_log_to_db(console_log_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    console_log_df = console_log_df.astype({"project_uid": int})
+    console_log_df["datetime_utc"] = console_log_df["datetime_utc"].astype(object).replace(pd.NaT, None)
+    console_log_df = console_log_df.map(escape_if_string)
+    return console_log_df
 
 class DBUserFlowStep(dh.AbstractModel):
     user_uid: int # Foreign Key Many-to-1
@@ -668,7 +705,7 @@ def cast_trigger_types_to_db(triggers_df: pd.DataFrame) -> pd.DataFrame:
 
 class DBScript(dh.AbstractModel):
     script_name: str
-    text: str
+    text: dh.LongText
     project_uid: str
 
 
