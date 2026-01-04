@@ -684,6 +684,32 @@ def cast_script_types_to_db(scripts_df: pd.DataFrame) -> pd.DataFrame:
     return scripts_df
 
 
+class DBDeployment(dh.AbstractModel):
+    pipeline_uid: str
+    port: int
+    host: str = "0.0.0.0"
+    module_app: str = "user_api_sample:app"
+    subprocess_id: int = None
+    status: str = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = None
+
+
+def cast_deployment_types_to_app(deployments_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast DB datatypes to in-app python datatypes."""
+    deployments_df = gdtm.cast_types_to_app(deployments_df)
+    deployments_df[["created_at", "updated_at"]] = deployments_df[["created_at", "updated_at"]].astype(object).replace(pd.NaT, None)
+    return deployments_df
+
+
+def cast_deployment_types_to_db(deployments_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast in-app python datatypes to DB datatypes."""
+    deployments_df = gdtm.cast_types_to_db(deployments_df)
+    deployments_df[["created_at", "updated_at"]] = deployments_df[["created_at", "updated_at"]].astype(object).replace(pd.NaT, None)
+    deployments_df = deployments_df.map(escape_if_string)
+    return deployments_df
+
+
 class DBDatabase(dh.AbstractModel):
     database_name: str
     server: str
