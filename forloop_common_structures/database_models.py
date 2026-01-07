@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timezone
+from enum import Enum
 import base64
 import dbhydra.dbhydra_core as dh
 import pandas as pd
@@ -721,13 +722,23 @@ def cast_script_types_to_db(scripts_df: pd.DataFrame) -> pd.DataFrame:
     return scripts_df
 
 
+class DeploymentStatusEnum(str, Enum):
+    """Enum for deployment status values."""
+    RUNNING = "running"
+    STOPPED = "stopped"
+    ERROR = "error"
+    PENDING = "pending"
+    LAUNCHING = "launching"
+    STOPPING = "stopping"
+
+
 class DBDeployment(dh.AbstractModel):
     pipeline_uid: str
     port: int
     host: str = "0.0.0.0"
     module_app: str = "user_api_sample:app"
     subprocess_id: int = None
-    status: str = None
+    status: str = None  # DeploymentStatusEnum - saved as a string as DBHydra does not support them
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = None
 
@@ -736,6 +747,11 @@ def cast_deployment_types_to_app(deployments_df: pd.DataFrame) -> pd.DataFrame:
     """Cast DB datatypes to in-app python datatypes."""
     deployments_df = gdtm.cast_types_to_app(deployments_df)
     deployments_df[["created_at", "updated_at"]] = deployments_df[["created_at", "updated_at"]].astype(object).replace(pd.NaT, None)
+    # Cast status string to DeploymentStatusEnum if not None
+    if "status" in deployments_df.columns:
+        deployments_df["status"] = deployments_df["status"].apply(
+            lambda x: DeploymentStatusEnum(x) if x is not None and pd.notna(x) and not isinstance(x, DeploymentStatusEnum) else x
+        )
     return deployments_df
 
 
@@ -743,6 +759,11 @@ def cast_deployment_types_to_db(deployments_df: pd.DataFrame) -> pd.DataFrame:
     """Cast in-app python datatypes to DB datatypes."""
     deployments_df = gdtm.cast_types_to_db(deployments_df)
     deployments_df[["created_at", "updated_at"]] = deployments_df[["created_at", "updated_at"]].astype(object).replace(pd.NaT, None)
+    # Cast DeploymentStatusEnum to string for database storage
+    if "status" in deployments_df.columns:
+        deployments_df["status"] = deployments_df["status"].apply(
+            lambda x: x.value if isinstance(x, DeploymentStatusEnum) else x
+        )
     deployments_df = deployments_df.map(escape_if_string)
     return deployments_df
 
