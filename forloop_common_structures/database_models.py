@@ -113,6 +113,7 @@ class DBPipeline(dh.AbstractModel):
 
     project_uid: int  # Foreign Key Many-to-1
     system_reactivation_status: str = None
+    endpoint_body_model: dict[Any] = {}
 
 
 def cast_pipeline_types_to_app(pipelines_df: pd.DataFrame) -> pd.DataFrame:
@@ -120,8 +121,8 @@ def cast_pipeline_types_to_app(pipelines_df: pd.DataFrame) -> pd.DataFrame:
     pipelines_df = pipelines_df.astype(
         {"uid": str, "project_uid": str, "is_active": bool}
     )
-    pipelines_df[["active_nodes_uids", "remaining_nodes_uids"]
-                ] = pipelines_df[["active_nodes_uids", "remaining_nodes_uids"]].map(json.loads)
+    pipelines_df[["active_nodes_uids", "remaining_nodes_uids", "endpoint_body_model"]
+                ] = pipelines_df[["active_nodes_uids", "remaining_nodes_uids", "endpoint_body_model"]].map(json.loads)
     return pipelines_df
 
 
@@ -129,8 +130,8 @@ def cast_pipeline_types_to_db(pipelines_df: pd.DataFrame) -> pd.DataFrame:
     """Cast in-app python datatypes to DB datatypes."""
     pipelines_df = pipelines_df.drop("uid", axis=1)
     pipelines_df = pipelines_df.astype({"project_uid": int, "is_active": int})
-    pipelines_df[["active_nodes_uids", "remaining_nodes_uids"]
-                ] = pipelines_df[["active_nodes_uids", "remaining_nodes_uids"]].map(json.dumps)
+    pipelines_df[["active_nodes_uids", "remaining_nodes_uids", "endpoint_body_model"]
+                ] = pipelines_df[["active_nodes_uids", "remaining_nodes_uids", "endpoint_body_model"]].map(json.dumps)
     pipelines_df = pipelines_df.map(escape_if_string)
     return pipelines_df
 
