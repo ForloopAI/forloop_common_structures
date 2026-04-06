@@ -43,6 +43,12 @@ class DBUser(dh.AbstractModel):
     created_at: datetime
 
 
+class DBUserSettings(dh.AbstractModel):
+    user_uid: int  # Foreign Key Many-to-1; one row per user
+    github_token: str = None
+    updated_at: datetime = None
+
+
 def cast_user_types_to_app(users_df: pd.DataFrame) -> pd.DataFrame:
     """Cast DB datatypes to in-app python datatypes."""
     users_df = gdtm.cast_types_to_app(users_df)
