@@ -1,3 +1,4 @@
+import ast
 import json
 from datetime import datetime, timezone
 from enum import Enum
@@ -18,6 +19,30 @@ import forloop_modules.flog as flog
 
 # FIXME: All cast_*_types_to_* functions are a workaround for dbhydra not supporting proper data casts
 # Ideally, when DBHydra gets updated, these functions can be simply removed from the codebase
+
+
+def _parse_stored_jsonable(value: Any) -> Any:
+    """DB text columns may be strict JSON or legacy single-quoted Python literal strings."""
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return None
+    if isinstance(value, (dict, list)):
+        return value
+    if isinstance(value, bytes):
+        value = value.decode("utf-8", errors="replace")
+    if not isinstance(value, str):
+        return value
+    s = value.strip()
+    if not s:
+        return None
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        try:
+            return ast.literal_eval(s)
+        except (ValueError, SyntaxError) as e:
+            raise json.JSONDecodeError(
+                f"value is not valid JSON or a Python literal ({e})", s, 0
+            ) from e
 
 
 class DBSession(dh.AbstractModel):
@@ -347,7 +372,7 @@ def cast_node_job_types_to_app(node_jobs_df: pd.DataFrame) -> pd.DataFrame:
     node_jobs_df[["created_at", "started_at",
                   "completed_at"]] = node_jobs_df[["created_at", "started_at", "completed_at"
                                                   ]].astype(object).replace(pd.NaT, None)
-    node_jobs_df["node"] = node_jobs_df["node"].map(json.loads)
+    node_jobs_df["node"] = node_jobs_df["node"].map(_parse_stored_jsonable)
     node_jobs_df["status"] = node_jobs_df["status"].map(lambda x: JobStatusEnum(x))
     return node_jobs_df
 
@@ -428,7 +453,7 @@ def cast_operation_job_types_to_app(operation_jobs_df: pd.DataFrame) -> pd.DataF
     operation_jobs_df[["created_at", "started_at",
                   "completed_at"]] = operation_jobs_df[["created_at", "started_at", "completed_at"
                                                   ]].astype(object).replace(pd.NaT, None)
-    operation_jobs_df["node"] = operation_jobs_df["node"].map(json.loads)
+    operation_jobs_df["node"] = operation_jobs_df["node"].map(_parse_stored_jsonable)
     operation_jobs_df["status"] = operation_jobs_df["status"].map(lambda x: JobStatusEnum(x))
     return operation_jobs_df
 
@@ -537,6 +562,47 @@ class DBUserFlowStep(dh.AbstractModel):
     step_identifier: str
     step_data: str
     timestamp_utc: str
+
+
+class DBWebExtractorStepEvent(dh.AbstractModel):
+    user_uid: int = None  # Foreign Key Many-to-1
+    project_uid: int = None
+    pipeline_uid: int = None
+    flow: str
+    event_type: str
+    step_index: int
+    step_name: str
+    previous_step_index: int = None
+    previous_step_name: str = None
+    next_step_index: int = None
+    next_step_name: str = None
+    duration_ms: int = None
+    url_domain: str = None
+    extraction_mode: str = None
+    pagination_mode: str = None
+    data_destination: str = None
+    is_tutorial_mode: bool = False
+    is_details_page_pipeline: bool = False
+    metadata_json: str = None
+    client_timestamp_utc: datetime = None
+    server_timestamp_utc: datetime = None
+
+
+def cast_webextractor_step_event_types_to_db(step_events_df: pd.DataFrame) -> pd.DataFrame:
+    """Cast WebExtractor step analytics events to DB-safe values."""
+    # TODO: Move this normalization into DBHydra's insert path so per-table casts are unnecessary.
+    step_events_df = step_events_df.copy()
+    step_events_df[["client_timestamp_utc", "server_timestamp_utc"]] = step_events_df[
+        ["client_timestamp_utc", "server_timestamp_utc"]
+    ].astype(object).replace(pd.NaT, None)
+    for timestamp_column in ["client_timestamp_utc", "server_timestamp_utc"]:
+        step_events_df[timestamp_column] = step_events_df[timestamp_column].map(
+            lambda value: value.replace(tzinfo=None)
+            if getattr(value, "tzinfo", None) is not None
+            else value
+        )
+    step_events_df = step_events_df.map(escape_if_string)
+    return step_events_df
     
     
 class DBUserAET(dh.AbstractModel):
