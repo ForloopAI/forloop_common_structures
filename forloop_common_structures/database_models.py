@@ -568,22 +568,25 @@ class DBWebExtractorStepEvent(dh.AbstractModel):
     user_uid: int = None  # Foreign Key Many-to-1
     project_uid: int = None
     pipeline_uid: int = None
-    flow: str
-    event_type: str
+    flow: dh.LongText
+    event_type: dh.LongText
     step_index: int
-    step_name: str
+    step_name: dh.LongText
     previous_step_index: int = None
-    previous_step_name: str = None
+    previous_step_name: dh.LongText = None
     next_step_index: int = None
-    next_step_name: str = None
+    next_step_name: dh.LongText = None
     duration_ms: int = None
-    url_domain: str = None
-    extraction_mode: str = None
-    pagination_mode: str = None
-    data_destination: str = None
+    url_domain: dh.LongText = None
+    session_id: dh.LongText = None
+    full_url: dh.LongText = None
+    error_code: dh.LongText = None
+    extraction_mode: dh.LongText = None
+    pagination_mode: dh.LongText = None
+    data_destination: dh.LongText = None
     is_tutorial_mode: bool = False
     is_details_page_pipeline: bool = False
-    metadata_json: str = None
+    metadata_json: dh.LongText = None
     client_timestamp_utc: datetime = None
     server_timestamp_utc: datetime = None
 
